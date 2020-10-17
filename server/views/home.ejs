@@ -1,0 +1,444 @@
+<%- include('partials/header') -%>
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+crossorigin=""></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+crossorigin=""/>
+
+
+<link rel="stylesheet" href="./leaflet/dist/leaflet-routing-machine.css" />
+<script src="./leaflet/dist/leaflet-routing-machine.js"></script>
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+
+
+
+
+<body class="h-full w-full flex-col" >
+    
+    <div id="login-modal" class="fixed w-full h-full  hidden items-center justify-center" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-body w-5/6 bg-white rounded px-4 py-4  ">
+            
+        <div id="mapid" style="position: relative !important;width: 100%; height: 600px;margin: 2px;padding: 2px;"></div>
+        </div>
+    </div>
+
+    <%-include('partials/nav') -%>
+    
+    <main class="mt-20 ml-24 mr-24  min-h-screen ">
+        <div class="   w-full  justify-between ">
+            <p class=" text-purple-600 pb-5  border-b border-purple-600 text-xl">ALERTS</p>
+        </div>
+
+        
+
+        <ul>
+            <li class="mx-6 my-3 sm:my-0 text-sm lg:flex-grow"><a href="/home"  id="showmap" class=" block mt-4 lg:inline-block lg:mt-0 text-white hover:text-white mr-4">Login</a></li>
+     
+        </ul>
+        
+
+        <div class =" flex flex-row flex-wrap justify-center w-full" id="mainAlerts">
+            
+        </div>
+
+
+        <div class="   w-full  justify-between ">
+            <p class=" text-purple-600 pb-5  border-b border-purple-600 text-xl">Aceepted </p>
+        </div>
+
+        <div class =" flex flex-row flex-wrap justify-center w-full" id="acceptedAlerts">
+            
+        </div>
+
+    </main>
+
+    <%-include('partials/footer') -%>
+</body>
+
+<script src="./js/jquery.js"></script>
+
+
+
+<script src = "/socket.io/socket.io.js"></script>
+   
+   <script>
+       
+       function getlink(){
+        var link=document.getElementById('link'+window.event.target.value)
+         var acceptedcase_id=document.getElementById('acceptedcaseid'+window.event.target.value)
+         var alertDiv=document.getElementById('acceptedCasesAlertDiv'+window.event.target.value)
+
+         if(link.value.trim()!="")
+         {
+            $.ajax({
+            url:"respond",
+            type:"POST",
+            data:{
+                link:link.value,
+                case_id:acceptedcase_id.value
+            },
+            success:function(data)
+            {
+                if(data=="OK")
+                {
+                    alertDiv.innerHTML=""
+                    alertDiv.classList=""
+                }
+            }
+         })
+        }
+        else{
+            alert("You need to Fill the link First")
+        }
+    }
+      
+    
+        var myLong='<%= coordLong %>';
+       var myLat='<%= coordLat %>';
+  
+       const mymap = L.map('mapid').setView([51.505, -0.09], 13);
+    
+        
+        const attribution= '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+        const tileUrl='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        const tiles=L.tileLayer(tileUrl,{attribution});
+
+        tiles.addTo(mymap);
+
+        var marker = L.marker([51.5, -0.09]).addTo(mymap);
+        
+        
+        
+    var routingControl=null;
+        function setRoute(secondLat,secondLong){
+            if (routingControl != null)
+                {removeRoutingControl();}
+                routingControl=L.routing.control({
+                waypoints: [
+                    L.latLng(myLat, myLong),
+                    L.latLng(secondLat, secondLong)
+                ],serviceURL:'http://map.project-osrm.org/?hl=en'
+                }).addTo(mymap);
+        }
+            
+
+    var removeRoutingControl = function () {
+        if (routingControl != null) {
+            mymap.removeControl(routingControl);
+            routingControl = null;
+        }
+    };
+
+    function acceptrequest()
+    {
+        var newcase=document.getElementById('newcase'+window.event.target.value)
+        alertDiv=(document.getElementById('alertDivNewCases'+window.event.target.value))
+        
+        $.ajax({
+         url:'acceptRequest',
+        type:'POST',
+        data:{
+            case_id:newcase.value
+            },
+        success:function(data)
+        {
+        if(data=="OK")
+        {
+            alertDiv.classList=""
+            alertDiv.innerHTML=""
+            //Todo
+            //add this div to accepted alerts
+            }
+         else{
+            
+            }
+        }
+    })
+    }
+
+    function setRouteHelper(){
+        var currlatitude=document.getElementById('lat'+window.event.target.value);
+        var currlongitude=document.getElementById('long'+window.event.target.value);
+        setRoute(currlatitude.value,currlongitude.value)
+    }
+
+
+    var cases=new Set();
+    var acceptedCase=new Set();
+      var socket = io();
+      socket.on('getAlerts',function(data){
+          
+          if(data)
+          {
+              for(i=0;i<data.finaldata.length;i++)
+              {
+                  if(cases.has(data.finaldata[i][0]._id));
+                  else{
+                    var mainDiv=document.getElementById('mainAlerts')
+                      var alertDiv=document.createElement('div')
+                      
+                      var leftDiv=document.createElement('div')
+                      leftDiv.classList="flex flex-col float-left w-1/2 "
+
+                      var rightDiv=document.createElement('div')
+                      rightDiv.classList="flex flex-row flex-wrap justify-center "
+
+
+                      //buttondiv
+                      var buttondiv=document.createElement('div')
+                      buttondiv.classList="flex  flex-wrap flex-col my-20 "
+
+                      //button
+                        
+                    currlatitude=document.createElement('p')
+                    currlatitude.id="lat"+i
+                    currlatitude.value=data.finaldata[i][0].coordinates[0].latitude;
+                    currlatitude.classList="hidden"
+
+
+                    currlongitude=document.createElement('p')
+                    currlongitude.id="long"+i
+                    currlongitude.value=data.finaldata[i][0].coordinates[0].longitude;
+                    currlongitude.classList="hidden"
+
+                    buttondiv.appendChild(currlatitude)
+                    buttondiv.appendChild(currlongitude)
+
+
+
+                        loadbutton=document.createElement('button')
+                        
+                        loadbutton.classList="float-right  text-sm px-4 py-2 leading-none border rounded text-purple-600 border-purple-600 hover:border-transparent hover:text-white hover:bg-purple-600 mt-4 "
+                        loadbutton.innerHTML="Load Route"
+                        loadbutton.setAttribute('data-toggle-modal','#login-modal')
+                        loadbutton.value=i;
+                        loadbutton.addEventListener('click',function(){
+                            setRouteHelper()
+                        })
+                        buttondiv.appendChild(loadbutton)
+                        
+
+                        
+
+
+
+                        acceptbutton=document.createElement('button')
+                        acceptbutton.classList="float-right   text-sm px-4 py-2 leading-none border rounded text-purple-600 border-purple-600 hover:border-transparent hover:text-white hover:bg-purple-600 mt-4 "
+                        acceptbutton.innerHTML="Accept"
+                        acceptbutton.value=i
+                        acceptbutton.addEventListener('click',function(){
+                            acceptrequest();
+                        })
+
+                        buttondiv.appendChild(acceptbutton)
+                        
+
+
+                        rightDiv.appendChild(buttondiv)
+
+                    
+                        //cases id
+                        var bold=document.createElement('b')
+                        alertDiv.classList=" ml-24 my-10 mr-24 border-2 rounded border-purple-600 w-5/6  "
+                        var caseId =document.createElement('p')
+                        caseId.id="newcase"+i
+                        caseId.value=data.finaldata[i][0]._id
+                        var caseIDText=document.createTextNode("Case ID : ")
+                        bold.appendChild(caseIDText)
+                        caseId.appendChild(bold)
+                        caseIDText=document.createTextNode(data.finaldata[i][0]._id)
+                        caseId.appendChild(caseIDText)
+                        caseId.classList="ml-10 my-10" 
+
+                        //description
+                        var bold1=document.createElement('b')
+                        var description=document.createElement('p')
+                        var descriptionText=document.createTextNode('description : ')
+                        bold1.appendChild(descriptionText)
+                        description.appendChild(bold1)
+                        descriptionText=document.createTextNode(data.finaldata[i][0].description)
+                        description.appendChild(descriptionText)
+                        description.classList="ml-10 my-10"
+
+                        //landmarks
+                        var bold2=document.createElement('b')
+                        var landmark=document.createElement('p')
+                        var landmarkText=document.createTextNode('landmark nearby : ')
+                        bold2.appendChild(landmarkText)
+                        landmark.appendChild(bold2)
+                        landmarkText=document.createTextNode(data.finaldata[i][0].landmark )
+                        landmark.appendChild(landmarkText)
+                        landmark.classList="ml-10 my-10"
+
+
+                        //finally appending
+                        leftDiv.appendChild(caseId)
+                        leftDiv.appendChild(description)
+                        leftDiv.appendChild(landmark)
+                        alertDiv.appendChild(leftDiv)
+                        alertDiv.appendChild(rightDiv)
+                        alertDiv.id='alertDivNewCases'+i
+
+                        mainDiv.appendChild(alertDiv)
+                        
+                        cases.add(data.finaldata[i][0]._id)
+                  }
+              }
+
+              
+              for(i=0;i<data.acceptedCases.length;i++)
+              {
+                if(acceptedCase.has(data.acceptedCases[i][0]._id));
+                  else{
+                      var case_id=data.acceptedCases[i][0]._id;
+                      var alertDiv=document.createElement('div')
+                      
+                      var leftDiv=document.createElement('div')
+                      leftDiv.classList="flex flex-col float-left w-1/2 "
+
+                      
+                      
+                      var rightDiv=document.createElement('div')
+                      rightDiv.classList="flex flex-row flex-wrap justify-center "
+
+
+                      //buttondiv
+                      var buttondiv=document.createElement('div')
+                      buttondiv.classList="flex  flex-wrap flex-col my-20 "
+
+
+                      var input=document.createElement('input')
+                      input.classList="border-2 rounded border-purple-600 py-2 px-4"
+                      input.placeholder="ReportLink"
+                      input.id="link"+i
+
+                      
+                      //button
+
+                      
+                        
+                        resolved=document.createElement('button')                        
+                        resolved.classList="float-right my-auto text-sm px-4 py-2 leading-none border rounded text-purple-600 border-purple-600 hover:border-transparent hover:text-white hover:bg-purple-600 mt-4 "
+                        resolved.innerHTML="Resolved."
+                        resolved.value=i
+                        resolved.addEventListener('click',function(){
+                           getlink();
+                        })
+        
+                        
+                        buttondiv.appendChild(input)
+                        buttondiv.appendChild(resolved)
+
+                        rightDiv.appendChild(buttondiv)
+
+
+
+                    
+                        //cases id
+                        var bold=document.createElement('b')
+                        alertDiv.classList=" ml-24 my-10 mr-24 border-2 rounded border-purple-600 w-5/6  "
+                        var caseId =document.createElement('p')
+                        caseId.value=data.acceptedCases[i][0]._id
+                        caseId.id='acceptedcaseid'+i
+                        var caseIDText=document.createTextNode("Case ID : ")
+                        bold.appendChild(caseIDText)
+                        caseId.appendChild(bold)
+                        caseIDText=document.createTextNode(data.acceptedCases[i][0]._id)
+                        caseId.appendChild(caseIDText)
+                        caseId.classList="ml-10 my-10" 
+
+                        //description
+                        var bold1=document.createElement('b')
+                        var description=document.createElement('p')
+                        var descriptionText=document.createTextNode('description : ')
+                        bold1.appendChild(descriptionText)
+                        description.appendChild(bold1)
+                        descriptionText=document.createTextNode(data.acceptedCases[i][0].description)
+                        description.appendChild(descriptionText)
+                        description.classList="ml-10 my-10"
+
+                        //landmarks
+                        var bold2=document.createElement('b')
+                        var landmark=document.createElement('p')
+                        var landmarkText=document.createTextNode('landmark nearby : ')
+                        bold2.appendChild(landmarkText)
+                        landmark.appendChild(bold2)
+                        landmarkText=document.createTextNode(data.acceptedCases[i][0].landmark )
+                        landmark.appendChild(landmarkText)
+                        landmark.classList="ml-10 my-10"
+
+
+                        //finally appending
+                        leftDiv.appendChild(caseId)
+                        leftDiv.appendChild(description)
+                        leftDiv.appendChild(landmark)
+                        alertDiv.appendChild(leftDiv)
+                       alertDiv.appendChild(rightDiv)
+                       alertDiv.id="acceptedCasesAlertDiv"+i
+                        var mainDiv=document.getElementById('acceptedAlerts')
+                        mainDiv.appendChild(alertDiv)
+                        
+                        acceptedCase.add(data.acceptedCases[i][0]._id)
+                  }
+              }
+
+              let modalToggles = document.querySelectorAll('[data-toggle-modal]');
+
+                modalToggles.forEach(function(button) {
+                    let modalSelector = button.dataset.toggleModal;
+                    let modal = document.querySelector(modalSelector);
+                    let modalBody = modal.querySelector('.modal-body');
+                    let closeBtn = modal.querySelector('.close');
+
+                    button.addEventListener('click', function(event) {
+                        modal.classList.remove('hidden');
+                        modal.classList.add('flex');
+                        event.preventDefault();
+                        event.stopPropagation();
+                        setTimeout(function() {
+                        mymap.invalidateSize();
+                    }, 100);
+                    });
+
+                    let closeModal = function() {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                    }
+                    if(closeBtn) {
+                        closeBtn.addEventListener('click', function(event) {
+                            event.preventDefault();
+                            closeModal();
+                        });
+                    }
+
+                    if(modalBody) {
+                        modalBody.addEventListener('click', function(event){
+                            event.stopPropagation();
+                        });
+
+                        window.addEventListener('click', function(event) {
+                            // console.log('closing Modal');
+                            // event.preventDefault();
+                            closeModal();
+                        });
+                    }
+                });
+
+
+          }
+          else
+          {
+              alert("Token Expired. Login Again!")
+                window.location.href="http://localhost:8080/logout";
+          }
+      });
+      socket.emit('getAlerts');
+      setInterval(function(){
+            socket.emit('getAlerts');
+        }, 1000 * 10)
+
+
+        
+   </script>
+</html>

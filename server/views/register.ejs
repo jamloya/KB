@@ -1,0 +1,135 @@
+<%- include ('partials/header') -%>
+<title>
+    REGISTERING
+</title>
+<style>
+.dropdown:hover .dropdown-menu {
+    display: block;
+  }
+</style>
+<body>
+    
+    <div class="flex justify-center  flex-wrap align-middle mt-16">
+    <div class="bg-white shadow-md w-1/4 rounded px-8 pt-6 pb-8 mb-4 flex flex-col  ">
+
+        <div class="mb-4 text-center w-full ">
+            <h2 >Registration</h2>
+        </div>
+
+        <form action="/registration" method="post">
+          <div class="mb-4">
+            <label class="block text-grey-darker text-sm font-bold mb-2" for="name">
+              Name 
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="name"  name="hospitalName" type="text" placeholder="Name of Hospital/NGO">
+          </div>
+          <div class="mb-4">
+          <label class="block text-grey-darker text-sm font-bold mb-2" for="emial">
+            Email
+          </label>
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker" id="email" type="text" name="email" placeholder="email">
+        </div>
+        <div class="mb-6">
+          <label class="block text-grey-darker text-sm font-bold mb-2" for="password">
+            Password
+          </label>
+          <input class="shadow appearance-none border border-red rounded w-full py-2 px-3 text-grey-darker mb-3" id="password" name="password" type="password" placeholder="******************">
+          <p class="text-red text-xs italic">Please choose a password.</p>
+        </div>
+        <div class="mb-6">
+            <label class="block text-grey-darker text-sm font-bold mb-2" for="password">
+              Timings
+            </label>
+            <div class="flex flex-row flex-wrap justify-center">
+                <div class="dropdown mx-3 inline-block relative">
+
+                  <select class="bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded inline-flex items-center" name="openingTime" >
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="one" style="display: none;">Opening</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="12am">12:00AM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="1am">1:00AM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="2am">2:00AM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="3am">3:00AM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="4am">4:00AM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="5am">5:00AM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="6am">6:00AM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="7am">7:00AM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="8am">8:00AM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="9am">9:00AM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="10am">10:00AM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="11am">11:00AM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="12pm">12:00PM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="1pm">1:00PM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="2pm">2:00PM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="3pm">3:00PM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="4pm">4:00PM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="5pm">5:00PM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="6pm">6:00PM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="7pm">7:00PM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="8pm">8:00PM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="9pm">9:00PM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="10pm">10:00PM</option>
+                    <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="11pm">11:00PM</option>
+                  </select>
+                </div>
+                <div class="dropdown mx-3 inline-block relative">
+                    <select class="bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded inline-flex items-center" name="closingTime">
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="one" style="display:none">Closing</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="12am">12:00AM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="1am">1:00AM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="2am">2:00AM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="3am">3:00AM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="4am">4:00AM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="5am">5:00AM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="6am">6:00AM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="7am">7:00AM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="8am">8:00AM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="9am">9:00AM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="10am">10:00AM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="11am">11:00AM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="12pm">12:00PM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="1pm">1:00PM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="2pm">2:00PM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="3pm">3:00PM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="4pm">4:00PM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="5pm">5:00PM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="6pm">6:00PM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="7pm">7:00PM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="8pm">8:00PM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="9pm">9:00PM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="10pm">10:00PM</option>
+                      <option class="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap" value="11pm">11:00PM</option>
+                    </select>
+                  </div>
+            </div>
+          </div>
+          <div class="mb-6">
+            <label class="block text-grey-darker text-sm font-bold mb-2" for="address">
+              Address
+            </label>
+            <div class="flex flex-row flex-wrap justify-center">
+              <input class="shadow appearance-none border mx-3 border-red rounded w-1/3 py-2 px-3 text-grey-darker mb-3" id="lat" type="text" name="Latitude" placeholder="Latitude">
+              <input class="shadow appearance-none border mx-3 border-red rounded w-1/3 py-2 px-3 text-grey-darker mb-3" id="long" type="text" name="longitude" placeholder="Longitude">
+            </div>
+          </div>
+        <div class="flex items-center justify-center">
+          <button class="bg-purple-600 px-3 py-2 rounded" type="submit">
+            Register
+          </button>
+        </div>
+    </form>
+    </div>
+</div>
+</body>
+<%- include ('partials/footer') -%>
+
+<script>
+   if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } 
+  function showPosition(position) {
+  document.getElementById('lat').value= position.coords.latitude ;
+  document.getElementById('long').value= position.coords.longitude;
+}
+</script>
+
+</html>
